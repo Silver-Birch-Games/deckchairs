@@ -18,9 +18,9 @@ const targets = [
   {id:5, playerId:1},
 ];
 
-/*
+
 const deckchairs = [
-  {id:1, playerId:0},
+  {id:13, playerId:0},
   {id:2, playerId:1},
   {id:8, playerId:0},
   {id:9, playerId:1},
@@ -30,15 +30,11 @@ const deckchairs = [
   {id:21, playerId:1},
   {id:27, playerId:0},
   {id:28, playerId:1},
-  {id:18, playerId:0},
+  {id:6, playerId:0},
   {id:4, playerId:1},
 ];
-*/
 
-const deckchairs = [
-  {id:7, playerId:0},
-  {id:21, playerId:1},
-];
+
 const iceBlockStartPosition = 0;
 
 const App = Client({  
