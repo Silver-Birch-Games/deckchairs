@@ -2,6 +2,46 @@ import React from 'react';
 
 class DeckchairsBoard extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state = {selectedCellId: null};
+      }
+
+    onCellClick = id => {
+        if(id === this.state.selectedCellId){
+            this.setState({selectedCellId:null});
+        }
+        else {
+            this.setState({selectedCellId:id});
+        }
+        
+    }
+
+    onDirectionClick = direction => {
+
+        if(this.state.selectedCellId != null){
+            console.log("Contents: " + this.props.G.cells[this.state.selectedCellId].contents);
+            if(this.props.G.cells[this.state.selectedCellId].contents != null){
+                console.log(this.props.G.cells[this.state.selectedCellId].contents);
+                if(this.props.G.cells[this.state.selectedCellId].contents === "Ice"){
+                    this.props.moves.pushIceBlock(direction);
+                    this.setState({selectedCellId:null});
+                }
+                else {
+                    this.props.moves.moveDeckchair(this.state.selectedCellId, direction);
+                    this.setState({selectedCellId:null});
+                }
+            }
+        }
+    }
+
+    onPlaceAttendantClick = () => {
+        if(this.state.selectedCellId != null){
+            this.props.moves.placeAttendant(this.state.selectedCellId);
+            this.setState({selectedCellId:null});
+        }
+    }
+
     render() {
         let width = this.props.G.width;
         let height = this.props.G.height;
@@ -14,9 +54,6 @@ class DeckchairsBoard extends React.Component {
           };
 
 
-        let cellStyleTarget0 = {...cellStyleEmpty, backgroundColor: '#ffbbbb'};
-
-        let cellStyleTarget1 = {...cellStyleEmpty, backgroundColor: '#bbbbff'};
 
         const cellIdStyle = {
             position: 'absolute',
@@ -42,8 +79,6 @@ class DeckchairsBoard extends React.Component {
             position: 'absolute',
             bottom: '0px',
             right: '0px',
-
-       
             fontSize: '20px',
         };
 
@@ -56,11 +91,15 @@ class DeckchairsBoard extends React.Component {
                 let cellStyle = cellStyleEmpty;
                 
                 if(this.props.G.cells[id].target === 0){
-                    cellStyle = cellStyleTarget0;
+                    cellStyle = {...cellStyleEmpty, backgroundColor: '#ffbbbb'};
                 }
                 
                 if(this.props.G.cells[id].target === 1){
-                    cellStyle = cellStyleTarget1;
+                    cellStyle = {...cellStyleEmpty, backgroundColor: '#bbbbff'};
+                }
+
+                if(id === this.state.selectedCellId){
+                    cellStyle = {...cellStyle, backgroundColor: '#ffff00'}
                 }
 
                 let textColor = this.props.G.cells[id].contents === 0?'#ff0000':this.props.G.cells[id].contents === 1?'#0000ff':'#000000';
@@ -70,7 +109,8 @@ class DeckchairsBoard extends React.Component {
                 let attendantStyleForCell = {...attendantStyle, color: attendantTextColor}
 
                 cells.push(
-                    <td style={cellStyle} key={id}>
+                    <td style={cellStyle} key={id}
+                        onClick={() => this.onCellClick(id)}>
 
                         <div style={cellIdStyle}>{id}</div>
 
@@ -93,7 +133,39 @@ class DeckchairsBoard extends React.Component {
                 <table id="board">
                     <tbody>{tbody}</tbody>
                 </table>
+
+                <div>
+                    <table id="controls">
+                        <tbody>
+                            <tr>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(7)}></td>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(0)}></td>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(1)}></td>
+                            </tr>
+                            <tr>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(6)}></td>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onPlaceAttendantClick()}></td>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(2)}></td>
+                            </tr>
+                            <tr>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(5)}></td>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(4)}></td>
+                                <td style={cellStyleEmpty}
+                                    onClick={() => this.onDirectionClick(3)}></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         )
     }
 
