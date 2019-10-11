@@ -2,7 +2,7 @@ import { Client } from 'boardgame.io/react';
 import DeckchairsGame from './DeckchairsGame';
 import DeckchairsBoard from './Board.js';
 
-
+/*
 const targets = [
   {id:0, playerId:0},
   {id:1, playerId:1},
@@ -33,6 +33,12 @@ const deckchairs = [
   {id:6, playerId:0},
   {id:4, playerId:1},
 ];
+*/
+
+const targets = [];
+
+
+const deckchairs = [];
 
 
 const iceBlockStartPosition = 0;

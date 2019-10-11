@@ -11,7 +11,17 @@ class DeckchairsBoard extends React.Component {
       }
 
     onCellClick = id => {
-        if(id === this.state.selectedCellId){
+
+        if(this.props.ctx.phase === "placeTargets"){
+            this.props.moves.placeTarget(id);
+        }
+        else if(this.props.ctx.phase === "placeDeckchairs"){
+            this.props.moves.placeDeckchair(id);
+        }
+        else if(this.props.ctx.phase === "placeIceBlock"){
+            this.props.moves.placeIceBlock(id);
+        }
+        else if(id === this.state.selectedCellId){
             this.setState({selectedCellId:null});
         }
         else {
@@ -161,26 +171,45 @@ class DeckchairsBoard extends React.Component {
                 <div>
 
                     {!this.props.ctx.gameover && 
-                        <h2>Round {this.props.G.roundsPlayed+1}</h2>
+                        <div>
+                            {this.props.ctx.phase === "playRound" && 
+                                <h2>Round {this.props.G.roundsPlayed+1}</h2>
+                            }
+
+                            {this.props.ctx.phase === "placeTargets" && 
+                                <h2>Click target squares</h2>
+                            }
+
+                            {this.props.ctx.phase === "placeDeckchairs" && 
+                                <h2>Click squares to add deckchairs</h2>
+                            }
+
+                            {this.props.ctx.phase === "placeIceBlock" && 
+                                <h2>Click square to add ice block</h2>
+                            }
+                        </div>
+                        
                     }
 
                     {this.props.ctx.gameover && 
                         <h2>Game Over!</h2>
                     }
-                    
+
 
                     <table id="scores">
                         <thead>
                             <tr>
-                               {this.props.G.scores.map((score, i) => <td key={i}>Player {i}</td>)} 
+                               {this.props.G.scores.map((score, i) => <td style={{textAlign:'center'}} key={i}>Player {i}</td>)} 
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                {this.props.G.scores.map((score, i) => <td key={i}>{score}</td>)} 
+                                {this.props.G.scores.map((score, i) => <td style={{textAlign:'center'}} key={i}>{score}</td>)} 
                             </tr>
                         </tbody>
                     </table>
+
+                    <br/>
                 </div>
 
                 <table id="board">
@@ -248,9 +277,13 @@ class DeckchairsBoard extends React.Component {
                 </div>
 
                 
-
+                <br/>
+                <br/>
+                <br/>
+                <br/>
+                
                 <div>Deckchair icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
-                <div>rock by Orpheus Studios from the Noun Project</div>
+                <div>Ice block icon is rock by Orpheus Studios from the Noun Project</div>
             </div>
 
         )

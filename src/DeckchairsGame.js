@@ -1,6 +1,7 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 import {boardUtils} from './BoardUtils';
 import {directions} from './BoardUtils';
+import { TurnOrder } from 'boardgame.io/core';
 
 function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
@@ -11,7 +12,6 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         cells[i] = {target:null, contents:null, attendant: null };
     }
 
-    
     for(let i=0; i<targets.length; i++){
         cells[targets[i].id].target = targets[i].playerId;
     }
@@ -20,10 +20,10 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         cells[deckchairs[i].id].contents = deckchairs[i].playerId;
     }
 
-    const actionsPerRound = 2;
-    const roundsPerGame = 1;
+    const actionsPerRound = 6;
+    const roundsPerGame = 12;
 
-    cells[iceBlockStartPosition].contents = "Ice";
+    //cells[iceBlockStartPosition].contents = "Ice";
 
     const utils = boardUtils(width,height);
 
@@ -203,6 +203,44 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         },
 
         phases: {
+            placeTargets:{
+                start: true,
+                turn:{
+                    moveLimit:6,
+                    order: TurnOrder.ONCE
+                },
+                moves:{
+                    placeTarget: (G, ctx,id) => {
+                        G.cells[id].target = parseInt(ctx.currentPlayer);
+                    }
+                },
+                next: 'placeDeckchairs',
+            },
+            placeDeckchairs:{
+                turn:{
+                    moveLimit:6,
+                    order: TurnOrder.ONCE
+                },
+                moves:{
+                    placeDeckchair: (G, ctx,id) => {
+                        G.cells[id].contents = parseInt(ctx.currentPlayer);
+                    }
+                },
+                next: 'placeIceBlock',
+            },
+            placeIceBlock:{
+                turn:{
+                    moveLimit:1
+                },
+                moves:{
+                    placeIceBlock: (G, ctx,id) => {
+                        G.iceBlockCellId = id;
+                        G.cells[id].contents = "Ice";
+                        ctx.events.endPhase();
+                    }
+                },
+                next: 'playRound'
+            },
             playRound:{
                 
                 moves:{
@@ -299,7 +337,6 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                         calculateScores(G);
                     }
                 },
-                start: true,
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
                 onBegin: (G, ctx) => {console.log("Beginning round");},
                 onEnd: (G, ctx) => { console.log("Round ended")},
