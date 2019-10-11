@@ -20,8 +20,8 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         cells[deckchairs[i].id].contents = deckchairs[i].playerId;
     }
 
-    const actionsPerRound = 6;
-    const roundsPerGame = 12;
+    const actionsPerRound = 12;
+    const roundsPerGame = 8;
 
     //cells[iceBlockStartPosition].contents = "Ice";
 
@@ -84,6 +84,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
     const applyShipMovement = function(state, direction){
 
+        if(direction == null){
+            return;
+        }
 
         //assign an ordering to the cells for trying to move the items on them
 
@@ -185,9 +188,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
     const setup = (ctx) => {
 
-        let directionCardDeck = [0,0,0,0,0,2,2,2,2,2,4,4,4,4,4,6,6,6,6,6,1,1,1,3,3,3,5,5,5,7,7,7];
+        let directionCardDeck = [0,1,2,3,4,5,6,7];
 
-        let shuffledDeck = ctx.random.Shuffle(directionCardDeck);
+        let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
 
         return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0] }
     }

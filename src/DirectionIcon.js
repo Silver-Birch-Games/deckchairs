@@ -9,7 +9,7 @@ class DirectionIcon extends React.Component {
 
         let directionText = ""; //TODO: put actual direction name in here
 
-        return <img alt={directionText} src={filename}/>
+        return <img width="50" height="50" alt={directionText} src={filename}/>
     }
 }
 
