@@ -197,7 +197,13 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
     return {
         setup: setup,
-        turn: {moveLimit:1},
+        turn: {
+            moveLimit:1,
+            order: {
+                first: (G, ctx) => (G.roundsPlayed % ctx.numPlayers),
+                next: (G, ctx) => (ctx.playOrderPos + 1) % ctx.numPlayers,
+            }
+        },
 
         phases: {
             playRound:{
