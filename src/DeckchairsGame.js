@@ -21,7 +21,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
     }
 
     const actionsPerRound = 2;
-    
+    const roundsPerGame = 1;
 
     cells[iceBlockStartPosition].contents = "Ice";
 
@@ -181,9 +181,6 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         for(let p=0; p<roundScores.length; p++){
             state.scores[p] += roundScores[p];
         }
-
-        
-
     }
 
     const setup = (ctx) => {
@@ -333,6 +330,30 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
         moves: {
         
+        },
+        endIf: (G, ctx) => {
+            if(G.roundsPlayed === roundsPerGame){
+                ///winner is the player with the highest score
+                let highScore = 0;
+                let highScorePlayers = [];
+
+                for(let i=0; i<G.scores.length; i++){
+                    if(G.scores[i] > highScore){
+                        highScore = G.scores[i];
+                        highScorePlayers = [i];
+                    }
+                    else if(G.scores[i] === highScore){
+                        highScorePlayers.push(i);
+                    }
+                }
+
+                if(highScorePlayers.length === 0 || highScorePlayers.length > 1){
+                    return {draw:true};
+                }
+                else{
+                    return {winner: highScorePlayers[0].toString()};
+                }
+            }
         },
     }
   };
