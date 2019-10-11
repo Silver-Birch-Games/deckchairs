@@ -202,9 +202,9 @@ class DeckchairsBoard extends React.Component {
                         </thead>
                         <tbody>
                             <tr>
-                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[0]}/></td>
-                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[1]}/></td>
-                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[2]}/></td>
+                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed]}/></td>
+                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed + 1]}/></td>
+                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed + 2]}/></td>
                             </tr>
                         </tbody>
                     </table>

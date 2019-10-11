@@ -1,14 +1,14 @@
 
 
 export const directions = {
-    up : 0,
-    upRight : 1,
-    right : 2,
-    downRight : 3,
-    down : 4,
-    downLeft : 5,
-    left : 6,
-    upLeft : 7,
+    north : 0,
+    northEast : 1,
+    east : 2,
+    southEast : 3,
+    south : 4,
+    southWest : 5,
+    west : 6,
+    northWest: 7,
 }
 
 
@@ -29,31 +29,31 @@ export function boardUtils(width, height) {
             let coords = this.idToCoords(id);
             
             switch(direction) {
-                case directions.up:
+                case directions.north:
                     coords.y--;
                     break;
-                case directions.upRight: 
+                case directions.northEast: 
                     coords.y--;
                     coords.x++;
                     break;
-                case directions.right: 
+                case directions.east: 
                     coords.x++;
                     break;
-                case directions.downRight: 
+                case directions.southEast: 
                     coords.y++;
                     coords.x++;
                     break;
-                case directions.down: 
+                case directions.south: 
                     coords.y++;
                     break;
-                case directions.downLeft: 
+                case directions.southWest: 
                     coords.x--;
                     coords.y++;
                     break;
-                case directions.left: 
+                case directions.west: 
                     coords.x--;
                     break;
-                case directions.upLeft: 
+                case directions.northWest: 
                     coords.x--;
                     coords.y--;
                     break;
