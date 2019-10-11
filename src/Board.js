@@ -1,5 +1,7 @@
 import React from 'react';
 import DirectionIcon from './DirectionIcon.js';
+import DeckchairIcon from './DeckchairIcon.js';
+import MeepleIcon from './MeepleIcon.js';
 
 class DeckchairsBoard extends React.Component {
 
@@ -90,6 +92,8 @@ class DeckchairsBoard extends React.Component {
             fontSize: '20px',
         };
 
+
+
         let tbody = [];
         for (let y=0; y<height; y++) {
             let cells = [];
@@ -123,11 +127,23 @@ class DeckchairsBoard extends React.Component {
                         <div style={cellIdStyle}>{id}</div>
 
                         <div style={contentsStyleForCell}>
-                            {this.props.G.cells[id].contents===0 || this.props.G.cells[id].contents===1?"C":this.props.G.cells[id].contents}
+                            {(this.props.G.cells[id].contents===0 || this.props.G.cells[id].contents===1) &&
+
+                                <DeckchairIcon color={textColor}/>
+
+                            }
+
+                            {this.props.G.cells[id].contents === "Ice" &&
+                                <img width="50" height="50" alt="Ice" src="images/iceBlock.png"/>
+                            }
                         </div>
 
                         <div style={attendantStyleForCell}>
-                        {this.props.G.cells[id].attendant===0 || this.props.G.cells[id].attendant===1?"A":null}
+
+                        {this.props.G.cells[id].attendant != null &&
+                            <MeepleIcon color={attendantTextColor }/>
+                        
+                        }
                         </div>
                     </td>
                 )
@@ -158,7 +174,7 @@ class DeckchairsBoard extends React.Component {
                                 <td style={cellStyleEmpty}
                                     onClick={() => this.onDirectionClick(6)}><DirectionIcon direction="6"/></td>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onPlaceAttendantClick()}></td>
+                                    onClick={() => this.onPlaceAttendantClick()}><img alt="Add Attendant" src="images/meeple.png"/></td>
                                 <td style={cellStyleEmpty}
                                     onClick={() => this.onDirectionClick(2)}><DirectionIcon direction="2"/></td>
                             </tr>
@@ -194,7 +210,8 @@ class DeckchairsBoard extends React.Component {
                     </table>
                 </div>
 
-
+                <div>Deckchair icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
+                <div>rock by Orpheus Studios from the Noun Project</div>
             </div>
 
         )

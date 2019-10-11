@@ -20,7 +20,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         cells[deckchairs[i].id].contents = deckchairs[i].playerId;
     }
 
-    const actionsPerRound = 8;
+    const actionsPerRound = 2;
     
 
     cells[iceBlockStartPosition].contents = "Ice";
@@ -86,8 +86,17 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
     }
 
+    const setup = (ctx) => {
+
+        let directionCardDeck = [0,0,0,0,0,2,2,2,2,2,4,4,4,4,4,6,6,6,6,6,1,1,1,3,3,3,5,5,5,7,7,7];
+
+        let shuffledDeck = ctx.random.Shuffle(directionCardDeck);
+
+        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck }
+    }
+
     return {
-        setup: () => ({ width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0 }),
+        setup: setup,
         turn: {moveLimit:1},
 
         phases: {
@@ -186,13 +195,26 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                 },
                 start: true,
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
-                onBegin: (G, ctx) => {console.log("Beginning round"); G.actionsTakenInRound=0},
+                onBegin: (G, ctx) => {console.log("Beginning round");},
                 onEnd: (G, ctx) => { console.log("Round ended")},
                 next: 'scoreRound',
                 
             },
             scoreRound:{
                 onBegin: (G, ctx) => {console.log("Beginning scoring")},
+                moves: {
+                    endRound: (G, ctx) => {
+                        G.actionsTakenInRound=0;
+
+                        //apply ship movement
+                        
+
+                        //calculate scores
+                        
+
+                        ctx.events.endPhase();
+                    }
+                },
                 next: 'playRound'
             }
         },
