@@ -154,6 +154,21 @@ class DeckchairsBoard extends React.Component {
 
         return (
             <div>
+                <div>
+                    <table id="scores">
+                        <thead>
+                            <tr>
+                               {this.props.G.scores.map((score, i) => <td>Player {i}</td>)} 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                {this.props.G.scores.map((score, i) => <td>{score}</td>)} 
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
                 <table id="board">
                     <tbody>{tbody}</tbody>
                 </table>
@@ -209,6 +224,8 @@ class DeckchairsBoard extends React.Component {
                         </tbody>
                     </table>
                 </div>
+
+                
 
                 <div>Deckchair icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
                 <div>rock by Orpheus Studios from the Noun Project</div>

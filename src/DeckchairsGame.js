@@ -169,13 +169,30 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
     }
 
+    const calculateScores = function(state){
+        let roundScores = [0,0];
+
+        for(let i=0; i<state.width*state.height; i++){
+            if(state.cells[i].target != null && state.cells[i].target === state.cells[i].contents){
+                roundScores[state.cells[i].target]++;
+            }
+        }
+
+        for(let p=0; p<roundScores.length; p++){
+            state.scores[p] += roundScores[p];
+        }
+
+        
+
+    }
+
     const setup = (ctx) => {
 
         let directionCardDeck = [0,0,0,0,0,2,2,2,2,2,4,4,4,4,4,6,6,6,6,6,1,1,1,3,3,3,5,5,5,7,7,7];
 
         let shuffledDeck = ctx.random.Shuffle(directionCardDeck);
 
-        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0 }
+        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0] }
     }
 
     return {
@@ -275,6 +292,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                          
                         
                     },
+                    testCalculateScores: (G, ctx) => {
+                        calculateScores(G);
+                    }
                 },
                 start: true,
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
@@ -294,6 +314,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
 
                         //calculate scores
+                        calculateScores(G);
                         
                         G.roundsPlayed++;
 
