@@ -45,6 +45,10 @@ class DeckchairsBoard extends React.Component {
         }
     }
 
+    onEndRoundClick = () => {
+        this.props.moves.endRound();
+    }
+
     render() {
         let width = this.props.G.width;
         let height = this.props.G.height;
@@ -155,15 +159,25 @@ class DeckchairsBoard extends React.Component {
         return (
             <div>
                 <div>
+
+                    {!this.props.ctx.gameover && 
+                        <h2>Round {this.props.G.roundsPlayed+1}</h2>
+                    }
+
+                    {this.props.ctx.gameover && 
+                        <h2>Game Over!</h2>
+                    }
+                    
+
                     <table id="scores">
                         <thead>
                             <tr>
-                               {this.props.G.scores.map((score, i) => <td>Player {i}</td>)} 
+                               {this.props.G.scores.map((score, i) => <td key={i}>Player {i}</td>)} 
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                {this.props.G.scores.map((score, i) => <td>{score}</td>)} 
+                                {this.props.G.scores.map((score, i) => <td key={i}>{score}</td>)} 
                             </tr>
                         </tbody>
                     </table>
@@ -173,6 +187,7 @@ class DeckchairsBoard extends React.Component {
                     <tbody>{tbody}</tbody>
                 </table>
 
+                {this.props.ctx.phase === "playRound" && 
                 <div>
                     <h3>Actions</h3>
                     <table id="controls">
@@ -204,6 +219,13 @@ class DeckchairsBoard extends React.Component {
                         </tbody>
                     </table>
                 </div>
+                }
+
+                {this.props.ctx.phase === "scoreRound" &&
+                    <div>
+                        <button onClick={() => this.onEndRoundClick()}>Do ship movement and add scores</button>
+                    </div>
+                }
 
                 <div>
                     <h3>Ship Movement Cards</h3>
