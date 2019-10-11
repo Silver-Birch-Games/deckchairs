@@ -1,4 +1,5 @@
 import React from 'react';
+import DirectionIcon from './DirectionIcon.js';
 
 class DeckchairsBoard extends React.Component {
 
@@ -50,6 +51,13 @@ class DeckchairsBoard extends React.Component {
             border: '1px solid #555',
             width: '50px',
             height: '50px',
+            position: 'relative',
+          };
+
+          const cardStyle = {
+            border: '1px solid #555',
+            width: '50px',
+            height: '100px',
             position: 'relative',
           };
 
@@ -135,35 +143,58 @@ class DeckchairsBoard extends React.Component {
                 </table>
 
                 <div>
+                    <h3>Actions</h3>
                     <table id="controls">
                         <tbody>
                             <tr>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(7)}></td>
+                                    onClick={() => this.onDirectionClick(7)}><DirectionIcon direction="7"/> </td>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(0)}></td>
+                                    onClick={() => this.onDirectionClick(0)}><DirectionIcon direction="0"/></td>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(1)}></td>
+                                    onClick={() => this.onDirectionClick(1)}><DirectionIcon direction="1"/></td>
                             </tr>
                             <tr>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(6)}></td>
+                                    onClick={() => this.onDirectionClick(6)}><DirectionIcon direction="6"/></td>
                                 <td style={cellStyleEmpty}
                                     onClick={() => this.onPlaceAttendantClick()}></td>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(2)}></td>
+                                    onClick={() => this.onDirectionClick(2)}><DirectionIcon direction="2"/></td>
                             </tr>
                             <tr>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(5)}></td>
+                                    onClick={() => this.onDirectionClick(5)}><DirectionIcon direction="5"/></td>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(4)}></td>
+                                    onClick={() => this.onDirectionClick(4)}><DirectionIcon direction="4"/></td>
                                 <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(3)}></td>
+                                    onClick={() => this.onDirectionClick(3)}><DirectionIcon direction="3"/></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
+
+                <div>
+                    <h3>Ship Movement Cards</h3>
+                    <table id="shipMovementCards">
+                        <thead>
+                            <tr>
+                                <td>1</td>
+                                <td>2</td>
+                                <td>3</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[0]}/></td>
+                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[1]}/></td>
+                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[2]}/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+
             </div>
 
         )
