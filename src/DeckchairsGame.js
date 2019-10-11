@@ -19,6 +19,8 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
     for(let i=0; i<deckchairs.length; i++){
         cells[deckchairs[i].id].contents = deckchairs[i].playerId;
     }
+
+    const actionsPerRound = 8;
     
 
     cells[iceBlockStartPosition].contents = "Ice";
@@ -30,9 +32,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         
         let cellIdToMoveTo = utils.cellInDirection(id, direction);
 
-        console.log(id + " trying to move to " + cellIdToMoveTo);
-        console.log("isIceBlock: " + isIceBlock);
-        console.log("Distance Travlled: " + distanceTravelled + " Max Distance: " + maxDistance);
+        //console.log(id + " trying to move to " + cellIdToMoveTo);
+        //console.log("isIceBlock: " + isIceBlock);
+        //console.log("Distance Travlled: " + distanceTravelled + " Max Distance: " + maxDistance);
         if (state.cells[cellIdToMoveTo] == null) {
             return false;
         }
@@ -45,7 +47,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
             //deckchairs can't travel further than the thing that hit them
                 
             if(!isIceBlock && distanceTravelled >= maxDistance){
-                console.log("ran out of momentum");
+                //console.log("ran out of momentum");
                 return false;
             }
 
@@ -85,14 +87,16 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
     }
 
     return {
-        setup: () => ({ width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition }),
+        setup: () => ({ width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0 }),
         turn: {moveLimit:1},
 
         phases: {
             playRound:{
+                
                 moves:{
                     moveDeckchair: (G, ctx, id, direction) => {
 
+                        console.log("ID:" + id + " Direction:" + direction)
                         //players can only move their own deckchairs
                         if(G.cells[id].contents.toString() !== ctx.currentPlayer) {
                             console.log("Can't move other player's deckchair");
@@ -131,14 +135,14 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                         }
 
 
-
+                        console.log("Moving " + id + " to " + cellIdToMoveTo );
                         
                         //move is legal so let's do it.
                         G.cells[cellIdToMoveTo].contents = G.cells[id].contents;
                         G.cells[id].contents = null;
                         
                         
-                        
+                        G.actionsTakenInRound++;
 
                     },
                     placeAttendant: (G, ctx, id) => {
@@ -158,7 +162,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                         //move is legal so let's do it
                         G.cells[id].attendant = parseInt(ctx.currentPlayer);
 
-
+                        G.actionsTakenInRound++;
                     },
                     pushIceBlock: (G, ctx, direction) => {
 
@@ -168,16 +172,28 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
                         let newIceBlockPosition = moveItem(G, iceBlockPosition, direction, true, 0,0);
 
-                        if(newIceBlockPosition){
+                        if(newIceBlockPosition && newIceBlockPosition !== iceBlockPosition){
                             G.iceBlockCellId = newIceBlockPosition;
+                            G.actionsTakenInRound++;
+                        }
+                        else{
+                            console.log("Pushing ice block must result in it moving");
+                            return INVALID_MOVE;
                         }
                          
-
+                        
                     },
                 },
                 start: true,
-                next: 'playRound',
+                endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
+                onBegin: (G, ctx) => {console.log("Beginning round"); G.actionsTakenInRound=0},
+                onEnd: (G, ctx) => { console.log("Round ended")},
+                next: 'scoreRound',
                 
+            },
+            scoreRound:{
+                onBegin: (G, ctx) => {console.log("Beginning scoring")},
+                next: 'playRound'
             }
         },
 
