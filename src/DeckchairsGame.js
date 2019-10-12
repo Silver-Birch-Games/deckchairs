@@ -202,13 +202,21 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         }
     }
 
+    const removeAttendants = function(state){
+        for(let i=0; i<state.width*state.height; i++){
+            state.cells[i].attendant = null;
+        }
+
+        state.attendantsUsed = [0,0];
+    }
+
     const setup = (ctx) => {
 
         let directionCardDeck = [0,1,2,3,4,5,6,7];
 
         let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
 
-        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId }
+        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId, attendantsUsed: [0,0] }
     }
 
     return {
@@ -316,10 +324,21 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                     },
                     placeAttendant: (G, ctx, id) => {
                         
+                        //can't place an attendant if already done this round
+                        if(G.attendantsUsed[parseInt(ctx.currentPlayer)] > 0){
+                            console.log("Already used attendant this round");
+                            return INVALID_MOVE; 
+                        }
+
+
                         //can't place an attendant on the ice block
                         if(G.cells[id].contents === "Ice") {
                             console.log("Can't place an attendant onto the ice block");
                             return INVALID_MOVE; 
+                        }
+
+                        if(id === G.bonusPointsCellId){
+                            console.log("Can't place an attendant onto the bonus points square");
                         }
 
                         //can't place an attendant onto a square that already has an attendant on it
@@ -330,6 +349,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
                         //move is legal so let's do it
                         G.cells[id].attendant = parseInt(ctx.currentPlayer);
+                        G.attendantsUsed[parseInt(ctx.currentPlayer)]++;
 
                         G.actionsTakenInRound++;
                     },
@@ -375,6 +395,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
                         //calculate scores
                         calculateScores(G);
+
+                        //remove attendants
+                        removeAttendants(G);
                         
                         G.roundsPlayed++;
 
