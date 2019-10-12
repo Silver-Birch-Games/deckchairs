@@ -71,7 +71,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
             else { 
                 //try to move the item, if it moves then move into its cell
 
-                if(moveItem(state, cellIdToMoveTo, direction, false, 0, distanceTravelled+1 )){
+                if(moveItem(state, cellIdToMoveTo, direction, false, 0, distanceTravelled+1 ) != null){
                     state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
                     state.cells[id].contents = null;
                     return cellIdToMoveTo;
