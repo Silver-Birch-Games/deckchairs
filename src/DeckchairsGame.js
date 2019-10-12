@@ -353,6 +353,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
                         if(id === G.bonusPointsCellId){
                             console.log("Can't place an attendant onto the bonus points square");
+                            return INVALID_MOVE; 
                         }
 
                         //can't place an attendant onto a square that already has an attendant on it
