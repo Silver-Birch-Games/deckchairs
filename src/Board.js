@@ -106,8 +106,6 @@ class DeckchairsBoard extends React.Component {
             fontSize: '20px',
         };
 
-
-
         let tbody = [];
         for (let y=0; y<height; y++) {
             let cells = [];
@@ -181,125 +179,152 @@ class DeckchairsBoard extends React.Component {
 
         return (
             <div>
-                <div>
+                <table>
+                    <tbody>
+                    <tr>
+                        <td>
+                            
+                            <div>
 
-                    {!this.props.ctx.gameover && 
-                        <div>
+                                {!this.props.ctx.gameover && 
+                                    <div style={{color:this.props.ctx.currentPlayer==='0'?'#ff0000':'#0000ff'}}>
+                                        {this.props.ctx.phase === "playRound" && 
+                                            <h2>Round {this.props.G.roundsPlayed+1} Action {(this.props.G.actionsTakenInRound + 2 - this.props.G.actionsTakenInRound%2)/2 }</h2>
+                                        }
+
+                                        {this.props.ctx.phase === "scoreRound" && 
+                                            <h2>Round {this.props.G.roundsPlayed+1} Ship Movement and Scoring</h2>
+                                        }
+
+                                        {this.props.ctx.phase === "placeTargets" && 
+                                            <h2>Click target squares</h2>
+                                        }
+
+                                        {this.props.ctx.phase === "placeDeckchairs" && 
+                                            <h2>Click squares to add deckchairs</h2>
+                                        }
+
+                                        {this.props.ctx.phase === "placeIceBlock" && 
+                                            <h2>Click square to add ice block</h2>
+                                        }
+                                    </div>
+                                    
+                                }
+
+                                {this.props.ctx.gameover && 
+                                    <h2>Game Over!</h2>
+                                }
+
+
+                                <table id="scores">
+                                    <thead>
+                                        <tr>
+                                        {this.props.G.scores.map((score, i) => <td style={{textAlign:'center', color:i===0?'#ff0000':'#0000ff'}} key={i}>Player {i}</td>)} 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            {this.props.G.scores.map((score, i) => <td style={{textAlign:'center', color:i===0?'#ff0000':'#0000ff'}} key={i}>{score}</td>)} 
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <br/>
+                            </div>
+
+                            <table id="board">
+                                <tbody>{tbody}</tbody>
+                            </table>
+                        </td>
+
+
+                        <td>
+
                             {this.props.ctx.phase === "playRound" && 
-                                <h2>Round {this.props.G.roundsPlayed+1}</h2>
+                            <div>
+                                <h3>Actions</h3>
+                                <table id="controls">
+                                    <tbody>
+                                        <tr>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(7)}><DirectionIcon direction="7"/> </td>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(0)}><DirectionIcon direction="0"/></td>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(1)}><DirectionIcon direction="1"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(6)}><DirectionIcon direction="6"/></td>
+                                            <td style={{...cellStyleEmpty, textAlign:'center'}}
+                                                onClick={() => this.onPlaceAttendantClick()}><MeepleIcon color={this.props.ctx.currentPlayer==='0'?'#ff0000':'#0000ff'}/></td>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(2)}><DirectionIcon direction="2"/></td>
+                                        </tr>
+                                        <tr>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(5)}><DirectionIcon direction="5"/></td>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(4)}><DirectionIcon direction="4"/></td>
+                                            <td style={cellStyleEmpty}
+                                                onClick={() => this.onDirectionClick(3)}><DirectionIcon direction="3"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             }
 
-                            {this.props.ctx.phase === "placeTargets" && 
-                                <h2>Click target squares</h2>
+                            {this.props.ctx.phase === "scoreRound" &&
+                                <div>
+                                    <button onClick={() => this.onEndRoundClick()}>Do ship movement and add scores</button>
+                                </div>
                             }
 
-                            {this.props.ctx.phase === "placeDeckchairs" && 
-                                <h2>Click squares to add deckchairs</h2>
-                            }
+                            <div>
+                                <h3>Ship Movement Cards</h3>
+                                <table id="shipMovementCards">
+                                    <thead>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>2</td>
+                                            <td>3</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed]}/></td>
+                                            <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed + 1]}/></td>
+                                            <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed + 2]}/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
 
-                            {this.props.ctx.phase === "placeIceBlock" && 
-                                <h2>Click square to add ice block</h2>
-                            }
-                        </div>
-                        
-                    }
-
-                    {this.props.ctx.gameover && 
-                        <h2>Game Over!</h2>
-                    }
 
 
-                    <table id="scores">
-                        <thead>
-                            <tr>
-                               {this.props.G.scores.map((score, i) => <td style={{textAlign:'center'}} key={i}>Player {i}</td>)} 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                {this.props.G.scores.map((score, i) => <td style={{textAlign:'center'}} key={i}>{score}</td>)} 
-                            </tr>
-                        </tbody>
-                    </table>
 
-                    <br/>
-                </div>
-
-                <table id="board">
-                    <tbody>{tbody}</tbody>
+                        </td>
+                    </tr>
+                    </tbody>            
                 </table>
+                 
+                    
 
-                {this.props.ctx.phase === "playRound" && 
-                <div>
-                    <h3>Actions</h3>
-                    <table id="controls">
-                        <tbody>
-                            <tr>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(7)}><DirectionIcon direction="7"/> </td>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(0)}><DirectionIcon direction="0"/></td>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(1)}><DirectionIcon direction="1"/></td>
-                            </tr>
-                            <tr>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(6)}><DirectionIcon direction="6"/></td>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onPlaceAttendantClick()}><img alt="Add Attendant" src="images/meeple.png"/></td>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(2)}><DirectionIcon direction="2"/></td>
-                            </tr>
-                            <tr>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(5)}><DirectionIcon direction="5"/></td>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(4)}><DirectionIcon direction="4"/></td>
-                                <td style={cellStyleEmpty}
-                                    onClick={() => this.onDirectionClick(3)}><DirectionIcon direction="3"/></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    
+
+                    
+
+                    
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    
+                    <div>Deckchair icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
+                    <div>Ice block icon is rock by Orpheus Studios from the Noun Project</div>
+                    <div>Star by businessicons13 from the Noun Project</div>
                 </div>
-                }
-
-                {this.props.ctx.phase === "scoreRound" &&
-                    <div>
-                        <button onClick={() => this.onEndRoundClick()}>Do ship movement and add scores</button>
-                    </div>
-                }
-
-                <div>
-                    <h3>Ship Movement Cards</h3>
-                    <table id="shipMovementCards">
-                        <thead>
-                            <tr>
-                                <td>1</td>
-                                <td>2</td>
-                                <td>3</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed]}/></td>
-                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed + 1]}/></td>
-                                <td style={cardStyle}><DirectionIcon direction={this.props.G.directionCardDeck[this.props.G.roundsPlayed + 2]}/></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                
-                <div>Deckchair icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
-                <div>Ice block icon is rock by Orpheus Studios from the Noun Project</div>
-                <div>Star by businessicons13 from the Noun Project</div>
-            </div>
-
+                 
         )
     }
 

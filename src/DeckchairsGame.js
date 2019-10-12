@@ -20,7 +20,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         cells[deckchairs[i].id].contents = deckchairs[i].playerId;
     }
 
-    const actionsPerRound = 12;
+    const actionsPerRound = 8;
     const roundsPerGame = 8;
     const bonusPointsCellId = 24;
 
@@ -35,19 +35,19 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         //console.log("isIceBlock: " + isIceBlock);
         //console.log("Distance Travlled: " + distanceTravelled + " Max Distance: " + maxDistance);
         if (state.cells[cellIdToMoveTo] == null) {
-            return false;
+            return null;
         }
         else {
             if(state.cells[cellIdToMoveTo].attendant != null){
                 //attendant in square - cannot move into it
-                return false;
+                return null;
             }
 
             //deckchairs can't travel further than the thing that hit them
                 
             if(!isIceBlock && distanceTravelled >= maxDistance){
                 //console.log("ran out of momentum");
-                return false;
+                return null;
             }
 
             if(state.cells[cellIdToMoveTo].contents == null) {
@@ -56,10 +56,12 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                 //empty square - move into it and try to move again
                 state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
                 state.cells[id].contents = null;
+
+                //console.log("moved contents from " + id + " to " + cellIdToMoveTo);
          
                 let finalDestinationId = moveItem(state,cellIdToMoveTo, direction, isIceBlock, distanceTravelled+1, maxDistance);
 
-                if(finalDestinationId){
+                if(finalDestinationId != null){
                     return finalDestinationId;
                 }
                 else{
@@ -75,7 +77,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                     return cellIdToMoveTo;
                 }
                 else{
-                    return false;
+                    return null;
                 }
                 
 
@@ -150,7 +152,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
                 let cellIdToMoveTo = utils.cellInDirection(id, direction);
 
-                console.log("Trying to move " + id + " to " + cellIdToMoveTo);
+                //console.log("Trying to move " + id + " to " + cellIdToMoveTo);
 
                 if (cellIdToMoveTo != null 
                     && state.cells[cellIdToMoveTo].contents == null
@@ -333,13 +335,14 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                     },
                     pushIceBlock: (G, ctx, direction) => {
 
-                        console.log("Ice position: " + G.iceBlockCellId);
+                        //console.log("Ice position: " + G.iceBlockCellId);
 
                         let iceBlockPosition = G.iceBlockCellId;
 
                         let newIceBlockPosition = moveItem(G, iceBlockPosition, direction, true, 0,0);
 
-                        if(newIceBlockPosition && newIceBlockPosition !== iceBlockPosition){
+                        if(newIceBlockPosition != null && newIceBlockPosition !== iceBlockPosition){
+                            //console.log("Ice block has moved from " + G.iceBlockCellId + " to " + newIceBlockPosition)
                             G.iceBlockCellId = newIceBlockPosition;
                             G.actionsTakenInRound++;
                         }
