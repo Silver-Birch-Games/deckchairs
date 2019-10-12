@@ -6,7 +6,7 @@ class DeckchairIcon extends React.Component {
     render(){
 
         return(
-        <svg fill={this.props.color} width="32" height="32" version="1.1" id="Capa_1" x="0px" y="0px"
+        <svg fill={this.props.color} width="40" height="40" version="1.1" id="Capa_1" x="0px" y="0px"
                         viewBox="0 0 395.076 395.076">
                     <g>
                         <path d="M204.381,161.295c0.211,0.113,0.428,0.223,0.637,0.338C204.809,161.518,204.592,161.408,204.381,161.295z"/>

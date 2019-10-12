@@ -35,6 +35,7 @@ const deckchairs = [
 ];
 */
 
+
 const targets = [];
 
 
@@ -44,7 +45,7 @@ const deckchairs = [];
 const iceBlockStartPosition = 0;
 
 const App = Client({  
-  game: DeckchairsGame(6,5, targets, deckchairs, iceBlockStartPosition),
+  game: DeckchairsGame(7,7, targets, deckchairs, iceBlockStartPosition),
   board: DeckchairsBoard });
 
 export default App;

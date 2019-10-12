@@ -22,6 +22,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
     const actionsPerRound = 12;
     const roundsPerGame = 8;
+    const bonusPointsCellId = 24;
 
     //cells[iceBlockStartPosition].contents = "Ice";
 
@@ -176,8 +177,21 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         let roundScores = [0,0];
 
         for(let i=0; i<state.width*state.height; i++){
-            if(state.cells[i].target != null && state.cells[i].target === state.cells[i].contents){
-                roundScores[state.cells[i].target]++;
+            //check for deckchair
+            if(state.cells[i].contents != null && state.cells[i].contents !== "Ice"){
+                //check central square 
+                if(i===bonusPointsCellId){
+                    roundScores[state.cells[i].contents]+=4;
+                }
+                else if(state.cells[i].target != null){
+                    //check if it is own target
+                    if(state.cells[i].target === state.cells[i].contents){
+                        roundScores[state.cells[i].target]+=2;
+                    }
+                    else{
+                        roundScores[state.cells[i].contents]++;
+                    }
+                }
             }
         }
 
@@ -192,7 +206,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
         let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
 
-        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0] }
+        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId }
     }
 
     return {

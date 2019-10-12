@@ -90,7 +90,7 @@ class DeckchairsBoard extends React.Component {
 
         const contentsStyle = {
             position: 'absolute',
-            top: '0px',
+            top: '10px',
             left: '0px',
             width: '100%',
             height: '100%',
@@ -140,7 +140,16 @@ class DeckchairsBoard extends React.Component {
 
                         <div style={cellIdStyle}>{id}</div>
 
+                        
+                        {id === this.props.G.bonusPointsCellId && 
+                                <div style={contentsStyleForCell}>
+                                    <img width="50" height="50" alt="*" src="images/star.png"></img>
+                                </div>                     
+                        }
+
                         <div style={contentsStyleForCell}>
+                            
+
                             {(this.props.G.cells[id].contents===0 || this.props.G.cells[id].contents===1) &&
 
                                 <DeckchairIcon color={textColor}/>
@@ -150,7 +159,11 @@ class DeckchairsBoard extends React.Component {
                             {this.props.G.cells[id].contents === "Ice" &&
                                 <img width="50" height="50" alt="Ice" src="images/iceBlock.png"/>
                             }
+
+                        
                         </div>
+
+                        
 
                         <div style={attendantStyleForCell}>
 
@@ -284,6 +297,7 @@ class DeckchairsBoard extends React.Component {
                 
                 <div>Deckchair icon made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/"             title="Flaticon">www.flaticon.com</a></div>
                 <div>Ice block icon is rock by Orpheus Studios from the Noun Project</div>
+                <div>Star by businessicons13 from the Noun Project</div>
             </div>
 
         )
