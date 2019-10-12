@@ -24,7 +24,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
     const roundsPerGame = 8;
     const bonusPointsCellId = 24;
 
-    //cells[iceBlockStartPosition].contents = "Ice";
+   // cells[iceBlockStartPosition].contents = "Ice";
 
     const utils = boardUtils(width,height);
 
@@ -38,8 +38,10 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
             return null;
         }
         else {
-            if(state.cells[cellIdToMoveTo].attendant != null){
-                //attendant in square - cannot move into it
+            console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
+            if(state.cells[cellIdToMoveTo].attendant != null && state.cells[cellIdToMoveTo].attendant !== state.cells[id].contents){
+                //other players attendant in square - cannot move into it
+                console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
                 return null;
             }
 
@@ -150,23 +152,27 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
             //check there is a deckchair here
             if(state.cells[id].contents != null && id !== state.iceBlockCellId){
 
-                let cellIdToMoveTo = utils.cellInDirection(id, direction);
+                //if there is an attendant on the chair then it does not move
+                if(state.cells[id].attendant == null){
 
-                //console.log("Trying to move " + id + " to " + cellIdToMoveTo);
+                    let cellIdToMoveTo = utils.cellInDirection(id, direction);
 
-                if (cellIdToMoveTo != null 
-                    && state.cells[cellIdToMoveTo].contents == null
-                    && state.cells[cellIdToMoveTo].attendant == null
-                    && cellIdToMoveTo !== state.iceBlockCellId){
-                        
-                        console.log("Succeed");
-                    //nothing in cell so we can move there
-                    state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
-                    state.cells[id].contents = null;
+                    //console.log("Trying to move " + id + " to " + cellIdToMoveTo);
+    
+                    if (cellIdToMoveTo != null 
+                        && state.cells[cellIdToMoveTo].contents == null
+                        && (state.cells[cellIdToMoveTo].attendant == null || state.cells[cellIdToMoveTo].attendant === state.cells[id].contents)
+                        && cellIdToMoveTo !== state.iceBlockCellId){
+                            
+                            console.log("Succeed");
+                        //nothing in cell so we can move there
+                        state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
+                        state.cells[id].contents = null;
+                    }
+
                 }
-                else{
-                    console.log("Failed");
-                }
+
+                
             }
 
             
@@ -214,7 +220,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
         let directionCardDeck = [0,1,2,3,4,5,6,7];
 
-        let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
+        //let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
+
+        let shuffledDeck = directionCardDeck;
 
         return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId, attendantsUsed: [0,0] }
     }
@@ -296,6 +304,12 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                         }
                                
                         let cellIdToMoveTo = utils.cellInDirection(id, direction);
+
+                        //can't move a deckchair onto an opponents attendant
+                        if(G.cells[cellIdToMoveTo].attendant != null && G.cells[cellIdToMoveTo].attendant !== G.cells[id].contents){
+                            console.log("Can't move a deckchair onto an opponents attendant");
+                            return INVALID_MOVE;
+                        }
 
                         //deckchairs can only move into an empty cell
                         if(cellIdToMoveTo == null) {
