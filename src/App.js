@@ -2,8 +2,7 @@ import { Client } from 'boardgame.io/react';
 import DeckchairsGame from './game/DeckchairsGame';
 import DeckchairsBoard from './ui/Board.js';
 
-
-const testMode = true;
+const testMode = false;
 
 let targets = [];
 let deckchairs = [];
