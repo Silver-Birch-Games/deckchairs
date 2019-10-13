@@ -1,9 +1,17 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
 import {boardUtils} from './BoardUtils';
-import {directions} from './BoardUtils';
 import { TurnOrder } from 'boardgame.io/core';
+import moveItem from './MoveItem.js';
+import applyShipMovement from './ApplyShipMovement';
+import calculateScores from './CalculateScores';
 
 function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, testMode) {
+
+    const actionsPerRound = 8;
+    const roundsPerGame = 8;
+    const bonusPointsCellId = 24;
+
+    const utils = boardUtils(width,height);
 
     
     let cells = Array(width * height);
@@ -23,194 +31,6 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
 
     if(testMode){
         cells[iceBlockStartPosition].contents = "Ice";
-    }
-
-    const actionsPerRound = 8;
-    const roundsPerGame = 8;
-    const bonusPointsCellId = 24;
-
-
-
-    const utils = boardUtils(width,height);
-
-    const moveItem = function(state, id, direction, isIceBlock, distanceTravelled, maxDistance) {
-        let cellIdToMoveTo = utils.cellInDirection(id, direction);
-
-        //console.log(id + " trying to move to " + cellIdToMoveTo);
-        //console.log("isIceBlock: " + isIceBlock);
-        //console.log("Distance Travlled: " + distanceTravelled + " Max Distance: " + maxDistance);
-        if (state.cells[cellIdToMoveTo] == null) {
-            return null;
-        }
-        else {
-            console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
-            if(state.cells[cellIdToMoveTo].attendant != null && state.cells[cellIdToMoveTo].attendant !== state.cells[id].contents){
-                //other players attendant in square - cannot move into it
-                console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
-                return null;
-            }
-
-            //deckchairs can't travel further than the thing that hit them
-                
-            if(!isIceBlock && distanceTravelled >= maxDistance){
-                //console.log("ran out of momentum");
-                return null;
-            }
-
-            if(state.cells[cellIdToMoveTo].contents == null) {
-                
-
-                //empty square - move into it and try to move again
-                state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
-                state.cells[id].contents = null;
-
-                //console.log("moved contents from " + id + " to " + cellIdToMoveTo);
-         
-                let finalDestinationId = moveItem(state,cellIdToMoveTo, direction, isIceBlock, distanceTravelled+1, maxDistance);
-
-                if(finalDestinationId != null){
-                    return finalDestinationId;
-                }
-                else{
-                    return cellIdToMoveTo;
-                }
-            }
-            else { 
-                //try to move the item, if it moves then move into its cell
-
-                if(moveItem(state, cellIdToMoveTo, direction, false, 0, distanceTravelled+1 ) != null){
-                    state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
-                    state.cells[id].contents = null;
-                    return cellIdToMoveTo;
-                }
-                else{
-                    return null;
-                }
-                
-
-            }
-        }
-    }
-
-    const applyShipMovement = function(state, direction){
-
-        if(direction == null){
-            return;
-        }
-
-        //assign an ordering to the cells for trying to move the items on them
-
-        let cellIds = [];
-
-        for(let i=0; i<state.width * state.height; i++){
-            let coords = utils.idToCoords(i);
-            switch(direction){
-                case directions.north:
-                    //ordering is y value
-                    cellIds.push({id:i, order:coords.y});
-                    break;
-                case directions.east:
-                    //ordering is reversed x value
-                    cellIds.push({id:i, order: state.width - coords.x});
-                    break;
-                case directions.south:
-                        //ordering is reversed y value
-                        cellIds.push({id:i, order: state.height - coords.y});
-                        break;
-                case directions.west:
-                    //ordering is x value
-                    cellIds.push({id:i, order:coords.x});
-                    break;
-
-                case directions.northEast:
-                    //ordering is reversed x plus y
-                    cellIds.push({id:i, order: state.width - coords.x + coords.y});
-                    break;
-
-                case directions.southEast:
-                    //ordering is reversed x plus reversed y
-                    cellIds.push({id:i, order: state.width - coords.x + state.height - coords.y});
-                    break;
-
-                case directions.southWest:
-                    //ordering is x plus reversed y
-                    cellIds.push({id:i, order: coords.x + state.height - coords.y});
-                    break;
-
-                case directions.northWest:
-                        //ordering is x plus y
-                        cellIds.push({id:i, order: coords.x + coords.y});
-                        break;
-
-                default:
-            }
-        }
-
-        cellIds.sort((a,b)=>(a.order - b.order));
-
-        //now try to move the item in each cell 
-
-        for(let i=0; i<state.width * state.height; i++){
-
-            let id=cellIds[i].id;
-
-            //check there is a deckchair here
-            if(state.cells[id].contents != null && id !== state.iceBlockCellId){
-
-                //if there is an attendant on the chair then it does not move
-                if(state.cells[id].attendant == null){
-
-                    let cellIdToMoveTo = utils.cellInDirection(id, direction);
-
-                    //console.log("Trying to move " + id + " to " + cellIdToMoveTo);
-    
-                    if (cellIdToMoveTo != null 
-                        && state.cells[cellIdToMoveTo].contents == null
-                        && (state.cells[cellIdToMoveTo].attendant == null || state.cells[cellIdToMoveTo].attendant === state.cells[id].contents)
-                        && cellIdToMoveTo !== state.iceBlockCellId){
-                            
-                            console.log("Succeed");
-                        //nothing in cell so we can move there
-                        state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
-                        state.cells[id].contents = null;
-                    }
-
-                }
-
-                
-            }
-
-            
-        }
-
-
-    }
-
-    const calculateScores = function(state){
-        let roundScores = [0,0];
-
-        for(let i=0; i<state.width*state.height; i++){
-            //check for deckchair
-            if(state.cells[i].contents != null && state.cells[i].contents !== "Ice"){
-                //check central square 
-                if(i===bonusPointsCellId){
-                    roundScores[state.cells[i].contents]+=4;
-                }
-                else if(state.cells[i].target != null){
-                    //check if it is own target
-                    if(state.cells[i].target === state.cells[i].contents){
-                        roundScores[state.cells[i].target]+=2;
-                    }
-                    else{
-                        roundScores[state.cells[i].contents]++;
-                    }
-                }
-            }
-        }
-
-        for(let p=0; p<roundScores.length; p++){
-            state.scores[p] += roundScores[p];
-        }
     }
 
     const removeAttendants = function(state){
@@ -379,7 +199,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
 
                         let iceBlockPosition = G.iceBlockCellId;
 
-                        let newIceBlockPosition = moveItem(G, iceBlockPosition, direction, true, 0,0);
+                        let newIceBlockPosition = moveItem(utils, G, iceBlockPosition, direction, true, 0,0);
 
                         if(newIceBlockPosition != null && newIceBlockPosition !== iceBlockPosition){
                             //console.log("Ice block has moved from " + G.iceBlockCellId + " to " + newIceBlockPosition)
@@ -394,7 +214,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                         
                     },
                     testCalculateScores: (G, ctx) => {
-                        calculateScores(G);
+                        calculateScores(G, bonusPointsCellId);
                     }
                 },
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
@@ -410,11 +230,11 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                         G.actionsTakenInRound=0;
 
                         //apply ship movement
-                        applyShipMovement(G, G.directionCardDeck[G.roundsPlayed]);
+                        applyShipMovement(utils, G, G.directionCardDeck[G.roundsPlayed]);
 
 
                         //calculate scores
-                        calculateScores(G);
+                        calculateScores(G, bonusPointsCellId);
 
                         //remove attendants
                         removeAttendants(G);
