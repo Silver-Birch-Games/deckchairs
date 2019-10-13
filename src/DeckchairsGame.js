@@ -3,8 +3,9 @@ import {boardUtils} from './BoardUtils';
 import {directions} from './BoardUtils';
 import { TurnOrder } from 'boardgame.io/core';
 
-function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
+function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, testMode) {
 
+    
     let cells = Array(width * height);
 
     for(let i=0; i<width*height; i++)
@@ -20,11 +21,15 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
         cells[deckchairs[i].id].contents = deckchairs[i].playerId;
     }
 
+    if(testMode){
+        cells[iceBlockStartPosition].contents = "Ice";
+    }
+
     const actionsPerRound = 8;
     const roundsPerGame = 8;
     const bonusPointsCellId = 24;
 
-   // cells[iceBlockStartPosition].contents = "Ice";
+
 
     const utils = boardUtils(width,height);
 
@@ -239,7 +244,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
 
         phases: {
             placeTargets:{
-                start: true,
+                start: !testMode,
                 turn:{
                     moveLimit:6,
                     order: TurnOrder.ONCE
@@ -277,7 +282,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition) {
                 next: 'playRound'
             },
             playRound:{
-                
+                start: testMode,
                 moves:{
                     moveDeckchair: (G, ctx, id, direction) => {
 
