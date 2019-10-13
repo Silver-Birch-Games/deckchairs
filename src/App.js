@@ -1,6 +1,6 @@
 import { Client } from 'boardgame.io/react';
-import DeckchairsGame from './DeckchairsGame';
-import DeckchairsBoard from './Board.js';
+import DeckchairsGame from './game/DeckchairsGame';
+import DeckchairsBoard from './ui/Board.js';
 
 
 const testMode = true;

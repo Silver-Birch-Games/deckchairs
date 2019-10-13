@@ -1,7 +1,7 @@
 import React from 'react';
-import DirectionIcon from './DirectionIcon.js';
-import DeckchairIcon from './DeckchairIcon.js';
-import MeepleIcon from './MeepleIcon.js';
+import DirectionIcon from './icons/DirectionIcon.js';
+import DeckchairIcon from './icons/DeckchairIcon.js';
+import MeepleIcon from './icons/MeepleIcon.js';
 
 class DeckchairsBoard extends React.Component {
 
