@@ -13,26 +13,6 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
 
     const utils = boardUtils(width,height);
 
-    
-    let cells = Array(width * height);
-
-    for(let i=0; i<width*height; i++)
-    {
-        cells[i] = {target:null, contents:null, attendant: null };
-    }
-
-    for(let i=0; i<targets.length; i++){
-        cells[targets[i].id].target = targets[i].playerId;
-    }
-
-    for(let i=0; i<deckchairs.length; i++){
-        cells[deckchairs[i].id].contents = deckchairs[i].playerId;
-    }
-
-    if(testMode){
-        cells[iceBlockStartPosition].contents = "Ice";
-    }
-
     const removeAttendants = function(state){
         for(let i=0; i<state.width*state.height; i++){
             state.cells[i].attendant = null;
@@ -43,11 +23,28 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
 
     const setup = (ctx) => {
 
+        let cells = Array(width * height);
+        for(let i=0; i<width*height; i++)
+        {
+            cells[i] = {target:null, contents:null, attendant: null };
+        }
+
+        if(testMode){
+            for(let i=0; i<targets.length; i++){
+                cells[targets[i].id].target = targets[i].playerId;
+            }
+        
+            for(let i=0; i<deckchairs.length; i++){
+                cells[deckchairs[i].id].contents = deckchairs[i].playerId;
+            }
+            cells[iceBlockStartPosition].contents = "Ice";
+        }
+
         let directionCardDeck = [0,1,2,3,4,5,6,7];
 
-        //let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
-
-        let shuffledDeck = directionCardDeck;
+        
+        let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
+    
 
         return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId, attendantsUsed: [0,0] }
     }
