@@ -103,7 +103,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                 moves:{
                     moveDeckchair: (G, ctx, id, direction) => {
 
-                        console.log("ID:" + id + " Direction:" + direction)
+                        //console.log("ID:" + id + " Direction:" + direction)
                         //players can only move their own deckchairs
                         if(G.cells[id].contents.toString() !== ctx.currentPlayer) {
                             console.log("Can't move other player's deckchair");
@@ -148,7 +148,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                         }
 
 
-                        console.log("Moving " + id + " to " + cellIdToMoveTo );
+                        //console.log("Moving " + id + " to " + cellIdToMoveTo );
                         
                         //move is legal so let's do it.
                         G.cells[cellIdToMoveTo].contents = G.cells[id].contents;
@@ -205,6 +205,8 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                         }
                         else{
                             console.log("Pushing ice block must result in it moving");
+                            console.log("Position: " + G.iceBlockCellId + "Direction: " + direction);
+                            console.log(G.attendantsUsed[0] + " " + G.attendantsUsed[1]);
                             return INVALID_MOVE;
                         }
                          
@@ -215,13 +217,13 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                     }
                 },
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
-                onBegin: (G, ctx) => {console.log("Beginning round");},
-                onEnd: (G, ctx) => { console.log("Round ended")},
+                //onBegin: (G, ctx) => {console.log("Beginning round");},
+                //onEnd: (G, ctx) => { console.log("Round ended")},
                 next: 'scoreRound',
                 
             },
             scoreRound:{
-                onBegin: (G, ctx) => {console.log("Beginning scoring")},
+                //onBegin: (G, ctx) => {console.log("Beginning scoring")},
                 moves: {
                     endRound: (G, ctx) => {
                         G.actionsTakenInRound=0;

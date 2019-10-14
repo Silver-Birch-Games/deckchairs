@@ -8,10 +8,10 @@ function moveItem(utils, state, id, direction, isIceBlock, distanceTravelled, ma
         return null;
     }
     else {
-        console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
+        //console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
         if(state.cells[cellIdToMoveTo].attendant != null && state.cells[cellIdToMoveTo].attendant !== state.cells[id].contents){
             //other players attendant in square - cannot move into it
-            console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
+            //console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
             return null;
         }
 

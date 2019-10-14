@@ -77,21 +77,14 @@ function applyShipMovement (utils, state, direction){
                     && (state.cells[cellIdToMoveTo].attendant == null || state.cells[cellIdToMoveTo].attendant === state.cells[id].contents)
                     && cellIdToMoveTo !== state.iceBlockCellId){
                         
-                        console.log("Succeed");
                     //nothing in cell so we can move there
                     state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
                     state.cells[id].contents = null;
                 }
 
-            }
-
-            
-        }
-
-        
+            }       
+        } 
     }
-
-
 }
 
 export default applyShipMovement;
