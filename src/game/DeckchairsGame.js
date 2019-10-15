@@ -5,7 +5,7 @@ import moveItem from './MoveItem.js';
 import applyShipMovement from './ApplyShipMovement';
 import calculateScores from './CalculateScores';
 
-function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, testMode) {
+function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,testMode,seed) {
 
     const actionsPerRound = 8;
     const roundsPerGame = 8;
@@ -44,13 +44,15 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
 
         
         let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
-    
+
+
 
         return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId, attendantsUsed: [0,0] }
     }
 
     return {
         setup: setup,
+        seed: seed,
         turn: {
             moveLimit:1,
             order: {
@@ -214,6 +216,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
                     },
                     testCalculateScores: (G, ctx) => {
                         calculateScores(G, bonusPointsCellId);
+                    },
+                    testShipMovement: (G, ctx, direction) => {
+                        applyShipMovement(utils, G, direction);
                     }
                 },
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
@@ -234,6 +239,8 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition, t
 
                         //calculate scores
                         calculateScores(G, bonusPointsCellId);
+
+                        //console.log("0:" + G.scores[0] + " 1:" + G.scores[1] )
 
                         //remove attendants
                         removeAttendants(G);

@@ -2,6 +2,7 @@ import React from 'react';
 import DirectionIcon from './icons/DirectionIcon.js';
 import DeckchairIcon from './icons/DeckchairIcon.js';
 import MeepleIcon from './icons/MeepleIcon.js';
+import SimulatorUi from './SimulatorUi';
 
 class DeckchairsBoard extends React.Component {
 
@@ -308,9 +309,7 @@ class DeckchairsBoard extends React.Component {
                     </tbody>            
                 </table>
                  
-                    
-
-                    
+                    <SimulatorUi game={this.props.game} G={this.props.G} ctx={this.props.ctx}/>
 
                     
 
