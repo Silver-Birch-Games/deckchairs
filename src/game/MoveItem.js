@@ -9,12 +9,7 @@ function moveItem(utils, state, id, direction, isIceBlock, distanceTravelled, ma
     }
     else {
         //console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
-        if(state.cells[cellIdToMoveTo].attendant != null && state.cells[cellIdToMoveTo].attendant !== state.cells[id].contents){
-            //other players attendant in square - cannot move into it
-            //console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
-            return null;
-        }
-
+        
         //deckchairs can't travel further than the thing that hit them
             
         if(!isIceBlock && distanceTravelled >= maxDistance){
@@ -24,6 +19,12 @@ function moveItem(utils, state, id, direction, isIceBlock, distanceTravelled, ma
 
         if(state.cells[cellIdToMoveTo].contents == null) {
             
+            //can't move onto an empty square if it has an attendant of another player of the deckchair being moved
+            if(state.cells[cellIdToMoveTo].attendant != null && state.cells[cellIdToMoveTo].attendant !== state.cells[id].contents){
+                //other players attendant in square - cannot move into it
+                //console.log("trying to move " + id + "(" + state.cells[id].contents + ") to " + cellIdToMoveTo + "(Attendant " + state.cells[cellIdToMoveTo].attendant + ")" );
+                return null;
+            }
 
             //empty square - move into it and try to move again
             state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
@@ -42,6 +43,11 @@ function moveItem(utils, state, id, direction, isIceBlock, distanceTravelled, ma
         }
         else { 
             //try to move the item, if it moves then move into its cell
+
+            //can't move a deckchair that has an attendant on it
+            if(state.cells[cellIdToMoveTo].attendant != null ){
+                return null;
+            }
 
             if(moveItem(utils, state, cellIdToMoveTo, direction, false, 0, distanceTravelled+1 ) != null){
                 state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
