@@ -101,7 +101,7 @@ class SimulatorUi extends React.Component {
                     
                     this.setStateNow({...this.state, iterationsRun: iteration, results:results});
                 }
-                await this.sleep(100);
+                await this.sleep(1);
             }
         }
         

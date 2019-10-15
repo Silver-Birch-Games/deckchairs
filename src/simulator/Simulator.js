@@ -3,6 +3,26 @@ import { Simulate, RandomBot, MCTSBot } from 'boardgame.io/ai';
 import DeckchairsGame from '../game/DeckchairsGame';
 import EnumerateDeckchairsMoves from './EnumerateDeckchairsMoves';
 
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
+  }
+
 export function runSimulation(G, ctx, seed){
 
     let targets=[];
@@ -27,7 +47,13 @@ export function runSimulation(G, ctx, seed){
 
     const game = DeckchairsGame(7,7,targets,deckchairs,iceBlockPosition, true, seed);
 
-    console.log(iceBlockPosition);
+    //we need to randomise the ship movement cards
+
+    let directionCardDeck = [0,1,2,3,4,5,6,7];
+
+    let shuffledDeck = [null, ...shuffle(directionCardDeck)];
+
+    let newG = {...G, directionCardDeck:shuffledDeck};
 
     const mctsBot = new MCTSBot({
         iterations: 200,
@@ -44,7 +70,7 @@ export function runSimulation(G, ctx, seed){
     let result = Simulate({
         game: game,
         bots: [randomBot, randomBot],
-        state: {G,ctx},
+        state: {G:newG,ctx},
     })
 
     return result.state.G.scores;
