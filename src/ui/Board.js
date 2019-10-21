@@ -3,6 +3,7 @@ import DirectionIcon from './icons/DirectionIcon.js';
 import DeckchairIcon from './icons/DeckchairIcon.js';
 import MeepleIcon from './icons/MeepleIcon.js';
 import SimulatorUi from './SimulatorUi';
+import { tsImportEqualsDeclaration } from '@babel/types';
 
 class DeckchairsBoard extends React.Component {
 
@@ -54,6 +55,10 @@ class DeckchairsBoard extends React.Component {
             this.props.moves.placeAttendant(this.state.selectedCellId);
             this.setState({selectedCellId:null});
         }
+    }
+
+    onRandomiseBoardClick = () => {
+        this.props.moves.randomiseBoard();
     }
 
     onEndRoundClick = () => {
@@ -214,6 +219,12 @@ class DeckchairsBoard extends React.Component {
 
                                 {this.props.ctx.gameover && 
                                     <h2>Game Over!</h2>
+                                }
+
+                                {this.props.ctx.phase === "placeTargets" &&
+                                    <div>
+                                        <button onClick={() => this.onRandomiseBoardClick()}>Random Board</button>
+                                    </div>
                                 }
 
 

@@ -1,16 +1,21 @@
 import {directions} from './BoardUtils';
 
+//return a new cells array
 function applyShipMovement (utils, state, direction){
-
     if(direction == null){
-        return;
+        return state.cells;
     }
 
     //assign an ordering to the cells for trying to move the items on them
 
     let cellIds = [];
 
+    let newCells = new Array(state.width * state.height);
+
     for(let i=0; i<state.width * state.height; i++){
+        let originalCell = state.cells[i];
+        newCells[i] = {target: originalCell.target, contents: originalCell.contents, attendant:originalCell.attendant};
+
         let coords = utils.idToCoords(i);
         switch(direction){
             case directions.north:
@@ -59,32 +64,32 @@ function applyShipMovement (utils, state, direction){
     //now try to move the item in each cell 
 
     for(let i=0; i<state.width * state.height; i++){
-
         let id=cellIds[i].id;
 
-        //check there is a deckchair here
-        if(state.cells[id].contents != null && id !== state.iceBlockCellId){
+        let cellIdToMoveTo = utils.cellInDirection(id, direction);
+        //check we are not moving off the board
+        if(cellIdToMoveTo != null)
+        {
+            //check there is a deckchair here
+            if(newCells[id].contents != null && id !== state.iceBlockCellId){
 
-            //if there is an attendant on the chair then it does not move
-            if(state.cells[id].attendant == null){
-
-                let cellIdToMoveTo = utils.cellInDirection(id, direction);
-
-                //console.log("Trying to move " + id + " to " + cellIdToMoveTo);
-
-                if (cellIdToMoveTo != null 
-                    && state.cells[cellIdToMoveTo].contents == null
-                    && (state.cells[cellIdToMoveTo].attendant == null || state.cells[cellIdToMoveTo].attendant === state.cells[id].contents)
-                    && cellIdToMoveTo !== state.iceBlockCellId){
-                        
-                    //nothing in cell so we can move there
-                    state.cells[cellIdToMoveTo].contents = state.cells[id].contents;
-                    state.cells[id].contents = null;
-                }
-
-            }       
-        } 
+                //if there is an attendant on the chair then it does not move
+                if(newCells[id].attendant == null){
+                    //console.log("Trying to move " + id + " to " + cellIdToMoveTo);
+                    if (newCells[cellIdToMoveTo].contents == null
+                        && (newCells[cellIdToMoveTo].attendant == null || newCells[cellIdToMoveTo].attendant === newCells[id].contents)
+                        && cellIdToMoveTo !== state.iceBlockCellId){
+                            
+                        //nothing in cell so we can move there
+                        newCells[cellIdToMoveTo] = {target:newCells[cellIdToMoveTo].target, contents:newCells[id].contents, attendant: newCells[cellIdToMoveTo].attendant };
+                        newCells[id] = {target:newCells[id].target, contents:null, attendant: newCells[id].attendant };
+                    }
+                }       
+            } 
+        }  
     }
+
+    return newCells;
 }
 
 export default applyShipMovement;

@@ -4,9 +4,9 @@ import { TurnOrder } from 'boardgame.io/core';
 import moveItem from './MoveItem.js';
 import applyShipMovement from './ApplyShipMovement';
 import calculateScores from './CalculateScores';
+import randomiseBoard from './RandomiseBoard';
 
 function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,testMode,seed) {
-
     const actionsPerRound = 8;
     const roundsPerGame = 8;
     const bonusPointsCellId = 24;
@@ -21,8 +21,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
         state.attendantsUsed = [0,0];
     }
 
-    const setup = (ctx) => {
-
+    function setup(ctx){
         let cells = Array(width * height);
         for(let i=0; i<width*height; i++)
         {
@@ -42,10 +41,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
 
         let directionCardDeck = [0,1,2,3,4,5,6,7];
 
-        
         let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
-
-
 
         return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId, attendantsUsed: [0,0] }
     }
@@ -71,7 +67,11 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
                 moves:{
                     placeTarget: (G, ctx,id) => {
                         G.cells[id].target = parseInt(ctx.currentPlayer);
-                    }
+                    },
+                    randomiseBoard: (G,ctx) => {
+                        G.cells = randomiseBoard(G, ctx);
+                        ctx.events.setPhase('playRound');
+                    },
                 },
                 next: 'placeDeckchairs',
             },
@@ -215,10 +215,14 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
                         
                     },
                     testCalculateScores: (G, ctx) => {
-                        calculateScores(G, bonusPointsCellId);
+                        let roundScores = calculateScores(G, G.cells, bonusPointsCellId);
+
+                        for(let i in roundScores){
+                            G.scores[i] += roundScores[i];
+                        }
                     },
                     testShipMovement: (G, ctx, direction) => {
-                        applyShipMovement(utils, G, direction);
+                        console.log(applyShipMovement(utils, G, direction));
                     }
                 },
                 endIf: (G, ctx) => (G.actionsTakenInRound >= actionsPerRound),
@@ -231,20 +235,24 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
                 //onBegin: (G, ctx) => {console.log("Beginning scoring")},
                 moves: {
                     endRound: (G, ctx) => {
-                        G.actionsTakenInRound=0;
-
                         //apply ship movement
-                        applyShipMovement(utils, G, G.directionCardDeck[G.roundsPlayed]);
+                        let cells = applyShipMovement(utils, G, G.directionCardDeck[G.roundsPlayed]);
 
-
+                        for(let i in cells){
+                            G.cells[i] = {target: cells[i].target, contents: cells[i].contents, attendant: cells[i].attendant};
+                        }
+                        
                         //calculate scores
-                        calculateScores(G, bonusPointsCellId);
+                        let roundScores = calculateScores(G, cells, bonusPointsCellId);
 
-                        //console.log("0:" + G.scores[0] + " 1:" + G.scores[1] )
+                        for(let i in roundScores){
+                            G.scores[i] += roundScores[i];
+                        }
 
                         //remove attendants
                         removeAttendants(G);
                         
+                        G.actionsTakenInRound=0;
                         G.roundsPlayed++;
 
                         ctx.events.endPhase();

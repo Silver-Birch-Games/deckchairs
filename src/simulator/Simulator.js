@@ -2,6 +2,8 @@
 import { Simulate, RandomBot, MCTSBot } from 'boardgame.io/ai';
 import DeckchairsGame from '../game/DeckchairsGame';
 import EnumerateDeckchairsMoves from './EnumerateDeckchairsMoves';
+import MaxScoreMCTSBot from './bots/MaxScoreMCTSBot';
+import DanBot from './bots/DanBot';
 
 
 function shuffle(array) {
@@ -60,6 +62,21 @@ export function runSimulation(G, ctx, seed){
         seed: seed,
         game: game,
         enumerate: EnumerateDeckchairsMoves,
+    })
+
+    const maxscoreBot = new MaxScoreMCTSBot({
+        iterations: 100,
+        playoutDepth: 10,
+        seed: seed,
+        game: game,
+        enumerate: EnumerateDeckchairsMoves
+    })
+
+    const danBot = new DanBot({
+        moveTime: 5,
+        seed: seed,
+        game: game,
+        enumerate: EnumerateDeckchairsMoves
     })
   
     const randomBot = new RandomBot({

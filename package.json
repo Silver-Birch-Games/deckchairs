@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "boardgame.io": "file:boardgame.io-0.33.2-dan6.tgz",
+    "immer": "^4.0.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "react-scripts": "3.2.0",
-    "boardgame.io": "file:boardgame.io-0.33.2.tgz"
+    "react-scripts": "3.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -35,25 +35,31 @@ export default function EnumerateDeckchairsMoves(G, ctx){
           }
 
           //check for attendant placing move
+          //this is problematic for the bot as it intoduces a lot of potential moves due to all the empty squares that can have an attendant placed on them
+          /*
           if(G.attendantsUsed[currentPlayerId] === 0){
               if(i !== G.bonusPointsCellId && cell.attendant == null && (cell.contents == null || cell.contents === currentPlayerId)){
                 moves.push({move: 'placeAttendant', args:[i]});
               }
           }
-          
+          */
+
+          //only suggest attendant placements onto own deckchairs
+          if(G.attendantsUsed[currentPlayerId] === 0){
+            if(i !== G.bonusPointsCellId && cell.attendant == null && cell.contents === currentPlayerId){
+              moves.push({move: 'placeAttendant', args:[i]});
+            }
+        }
+
         }
 
         //check what ice block moves are available
         //there needs to an empty cell somewhere in the direction until we get to the edge of the board or an attendant in order for the iceblock to be able to move  
-        //(this may gloss over deckchairs that can move onto attendants of their own colour)
-
         for(let d=0; d<8; d++){
           let cellId = G.iceBlockCellId;
           let nextCellId = G.iceBlockCellId;
           while(cellId != null){
             nextCellId = utils.cellInDirection(cellId,d);
-
-
             if(nextCellId != null){
               if(G.cells[nextCellId].contents == null){
                 if(G.cells[nextCellId].attendant != null && G.cells[nextCellId].attendant !== G.cells[cellId].contents){

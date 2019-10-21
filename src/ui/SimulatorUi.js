@@ -78,11 +78,22 @@ class SimulatorUi extends React.Component {
                     }
 
                     let winPercentages = [0,0];
+                    
                     let totalWins = 0;
                     for(let i=0; i<wins.length;i++){
                         winPercentages[i] = (100*wins[i] / iteration).toFixed(2);
                         totalWins += wins[i];
                     }
+
+                    let winShares = [0,0];
+                    for(let i=0; i<wins.length;i++){
+                        winShares[i] = (100*wins[i] / totalWins).toFixed(2);
+                    }
+
+                    //error at 99% confidence
+                    let z= 2.5759;
+                    let winShareError = (100 * z / (2 * Math.sqrt(totalWins))).toFixed(2);
+                    
 
                     let drawPercentage = (100*(iteration - totalWins)/iteration).toFixed(2);
 
@@ -90,6 +101,8 @@ class SimulatorUi extends React.Component {
                         wins:wins,
                         draws: draws,
                         winPercentages: winPercentages,
+                        winShares: winShares,
+                        winShareError: winShareError,
                         drawPercentage: drawPercentage,
                         maxScores: maxScores,
                         minScores: minScores,
@@ -152,6 +165,15 @@ class SimulatorUi extends React.Component {
                                         <td style={resultsRowTitleStyle}>Win Rate</td>
                                         <td>{this.state.results.winPercentages[0]}%</td>
                                         <td>{this.state.results.winPercentages[1]}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={resultsRowTitleStyle}>Win Share</td>
+                                        <td>{this.state.results.winShares[0]}%</td>
+                                        <td>{this.state.results.winShares[1]}%</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={resultsRowTitleStyle}>Win Share Error (99% confidence)</td>
+                                        <td>{this.state.results.winShareError}%</td>
                                     </tr>
                                     <tr>
                                         <td style={resultsRowTitleStyle}>Draws</td>
