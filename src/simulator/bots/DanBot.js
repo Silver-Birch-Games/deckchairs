@@ -30,7 +30,7 @@ export default class DanBot extends Bot {
             this.moveTime =  moveTime;
         }
         else{
-            this.moveTime = 10;
+            this.moveTime = 1;
         }
             
       }
@@ -52,14 +52,20 @@ export default class DanBot extends Bot {
         //console.log(Date.parse(new Date()));
         //expand the tree as much as time allows
         let iterations = 0;
+        let totalDepths = 0;
+        let totalNodes = 0;
         while(Date.parse(new Date()) < this.EndTime){
             //take a trip down the tree
-            this.expandTree(rootNode, 0, 3);
+            let result = this.expandTree(rootNode, 0, 1);
             iterations++;
+            totalDepths += result.depth;
+            totalNodes += result.newNodesCount;
         }
 
         console.log("Performed " + iterations + " iterations");
         console.log("Max depth reached: " + rootNode.maxDepth );
+        console.log("Average depth: " + totalDepths / iterations);
+        console.log("Total game poitions evaluated: " + totalNodes);
         //console.log("Memory usage:" + sizeof(rootNode));
 
         //time's up, now get the best move 
@@ -95,7 +101,7 @@ export default class DanBot extends Bot {
           }
 
           //score this position for each player
-          let nodeScores = this.evaluator({G: state.G, ctx: state.ctx});
+          let nodeScores = this.evaluator({G: state.G, ctx: state.ctx}).map((score) => (score));
 
           return {
               state: state,
@@ -103,17 +109,26 @@ export default class DanBot extends Bot {
               scores: nodeScores,
               expanded: false,
               maxDepth: depth,
+              descendentCount: children.length,
+              exploredDescendentCount: 0,
           }
       }
 
       expandTree(node, depth, exploreDepth) {
+
+            //do not try to go beyond the end of the game
+            if(node.state.ctx.gameover){
+                return {scores:node.scores, maxDepth:depth, depth:depth, newNodesCount: 0};
+            }
+
+
             //console.log("expandTree");
             //console.log(node);
             if(!node.expanded  && exploreDepth <= 0){
                 //first time we have been here
                 node.expanded = true;
 
-                return {scores:node.scores, depth:node.maxDepth};
+                return {scores:node.scores, depth:depth, maxDepth: node.maxDepth, newNodesCount: 0};
             }
 
             // 1 - choose a child to expand
@@ -127,17 +142,30 @@ export default class DanBot extends Bot {
 
             let currentPlayerId = node.state.ctx.currentPlayer;
 
+            let newNodesCount = 0;
+
             for(let i in node.children){
                 let child = node.children[i];
 
                 //if this node has not been created yet, create it
                 if(child.node == null){
-
                     const childState = this.reducer(node.state, child.move);
                     node.children[i].node = this.makeNode(childState, depth+1);
+                    node.descendentCount += node.children[i].node.descendentCount;
+                    newNodesCount++;
                 }
 
-                let childScore = child.node.scores[currentPlayerId];
+                //let childScore = child.node.scores[currentPlayerId] - child.node.scores[currentPlayerId+1%2];
+
+                let totalScores = child.node.scores[0] + child.node.scores[1];
+                let childScore 
+                
+                if(totalScores > 0){
+                    childScore = child.node.scores[currentPlayerId] / (child.node.scores[0] + child.node.scores[1]);
+                } 
+                else{
+                    childScore = 0;
+                }
 
                 scores.push(childScore);
                 if(childScore > maximumScore){
@@ -173,15 +201,20 @@ export default class DanBot extends Bot {
 
             let selectedChild = node.children[selectedIndex];
 
+            let iterationDepth = depth;
+
             if(selectedChild != null){
                 let expandResult = this.expandTree(selectedChild.node, depth+1, exploreDepth - 1);
 
+                newNodesCount += expandResult.newNodesCount;
+
+                iterationDepth = expandResult.depth;
 
                 let childScores = expandResult.scores;
 
                 
-                if(expandResult.depth > node.maxDepth){
-                    node.maxDepth = expandResult.depth;
+                if(expandResult.maxDepth > node.maxDepth){
+                    node.maxDepth = expandResult.maxDepth;
                 }
 
                 // if the new position is better for the current player, set this nodes score to those it returned
@@ -203,7 +236,7 @@ export default class DanBot extends Bot {
                 */
             }
             
-            return {scores:node.scores, depth:node.maxDepth};
+            return {scores:node.scores, maxDepth:node.maxDepth, depth:iterationDepth, newNodesCount:newNodesCount};
         
       }
 }
