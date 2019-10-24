@@ -47,7 +47,9 @@ export function runSimulation(G, ctx, seed){
         }
     }
 
-    const game = DeckchairsGame(7,7,targets,deckchairs,iceBlockPosition, true, seed);
+    const numPlayers = 4;
+
+    const game = DeckchairsGame(numPlayers, 7,7,targets,deckchairs,iceBlockPosition, true, seed);
 
     //we need to randomise the ship movement cards
 

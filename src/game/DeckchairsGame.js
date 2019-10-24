@@ -6,7 +6,7 @@ import applyShipMovement from './ApplyShipMovement';
 import calculateScores from './CalculateScores';
 import randomiseBoard from './RandomiseBoard';
 
-function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,testMode,seed) {
+function DeckchairsGame(numPlayers, width,height,targets,deckchairs,iceBlockStartPosition,testMode,seed) {
     const actionsPerRound = 8;
     const roundsPerGame = 8;
     const bonusPointsCellId = 24;
@@ -63,7 +63,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
             placeTargets:{
                 start: !testMode,
                 turn:{
-                    moveLimit:6,
+                    moveLimit: 12/numPlayers,
                     order: TurnOrder.ONCE
                 },
                 moves:{
@@ -79,7 +79,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
             },
             placeDeckchairs:{
                 turn:{
-                    moveLimit:6,
+                    moveLimit: 12/numPlayers,
                     order: TurnOrder.ONCE
                 },
                 moves:{

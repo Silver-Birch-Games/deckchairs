@@ -101,9 +101,11 @@ if(testMode){
 
 const iceBlockStartPosition = 24;
 
+const numPlayers = 4;
+
 const App = Client({  
-  game: DeckchairsGame(7,7, targets, deckchairs, iceBlockStartPosition, testMode, (+new Date()).toString(36).slice(-10)),
-  numPlayers: 4,
+  game: DeckchairsGame(numPlayers, 7,7, targets, deckchairs, iceBlockStartPosition, testMode, (+new Date()).toString(36).slice(-10)),
+  numPlayers: numPlayers,
   board: DeckchairsBoard,
   ai: AI({
     bot: DanBot,
