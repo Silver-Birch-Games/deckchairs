@@ -49,7 +49,7 @@ export function runSimulation(G, ctx, seed){
 
     const numPlayers = 4;
 
-    const game = DeckchairsGame(numPlayers, 7,7,targets,deckchairs,iceBlockPosition, true, seed);
+    const game = DeckchairsGame(numPlayers,7,7,targets,deckchairs,iceBlockPosition, true, seed);
 
     //we need to randomise the ship movement cards
 
@@ -75,7 +75,7 @@ export function runSimulation(G, ctx, seed){
     })
 
     const danBot = new DanBot({
-        moveTime: 5,
+        moveTime: 1,
         seed: seed,
         game: game,
         enumerate: EnumerateDeckchairsMoves
@@ -88,7 +88,7 @@ export function runSimulation(G, ctx, seed){
 
     let result = Simulate({
         game: game,
-        bots: [randomBot, randomBot],
+        bots: [randomBot, randomBot,randomBot,randomBot],
         state: {G:newG,ctx},
     })
 
