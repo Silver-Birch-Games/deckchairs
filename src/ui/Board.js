@@ -5,6 +5,23 @@ import MeepleIcon from './icons/MeepleIcon.js';
 import SimulatorUi from './SimulatorUi';
 import { tsImportEqualsDeclaration } from '@babel/types';
 
+
+const colors = [
+    {main:'#ff0000', targets:'#ffbbbb'},  //red
+    {main:'#0000ff', targets:'#bbbbff'},   //blue
+    {main:'#00ff00', targets:'#bbffbb'},  //green
+    {main:'#00ffff', targets:'#bbffff'},  //cyan
+];
+
+function getColor(playerId){
+    if(typeof(playerId) === 'number'){
+        return colors[playerId];
+    }
+    else{
+        return '#000000';
+    }
+}
+
 class DeckchairsBoard extends React.Component {
 
     constructor(props) {
@@ -119,23 +136,32 @@ class DeckchairsBoard extends React.Component {
                 const id = width*y + x;
 
                 let cellStyle = cellStyleEmpty;
-                
-                if(this.props.G.cells[id].target === 0){
-                    cellStyle = {...cellStyleEmpty, backgroundColor: '#ffbbbb'};
-                }
-                
-                if(this.props.G.cells[id].target === 1){
-                    cellStyle = {...cellStyleEmpty, backgroundColor: '#bbbbff'};
-                }
+
+                cellStyle = {...cellStyleEmpty, backgroundColor: getColor(this.props.G.cells[id].target).targets};
 
                 if(id === this.state.selectedCellId){
                     cellStyle = {...cellStyle, backgroundColor: '#ffff00'}
                 }
 
-                let textColor = this.props.G.cells[id].contents === 0?'#ff0000':this.props.G.cells[id].contents === 1?'#0000ff':'#000000';
+                let textColor
+                
+                if(typeof(this.props.G.cells[id].contents) === 'number'){
+                        textColor = colors[this.props.G.cells[id].contents].main;
+                }
+                else{
+                    textColor = '#000000'
+                }
+                
                 let contentsStyleForCell = {...contentsStyle, color: textColor };
 
-                let attendantTextColor = this.props.G.cells[id].attendant === 0?'#ff0000':this.props.G.cells[id].attendant === 1?'#0000ff':'#000000';
+                let attendantTextColor;
+                if(typeof(this.props.G.cells[id].attendant) === 'number'){
+                    attendantTextColor = colors[this.props.G.cells[id].attendant].main;
+                }
+                else{
+                    attendantTextColor = '#000000';
+                }
+
                 let attendantStyleForCell = {...attendantStyle, color: attendantTextColor}
 
                 cells.push(
@@ -154,7 +180,7 @@ class DeckchairsBoard extends React.Component {
                         <div style={contentsStyleForCell}>
                             
 
-                            {(this.props.G.cells[id].contents===0 || this.props.G.cells[id].contents===1) &&
+                            {(typeof(this.props.G.cells[id].contents) === 'number') &&
 
                                 <DeckchairIcon color={textColor}/>
 
@@ -193,9 +219,9 @@ class DeckchairsBoard extends React.Component {
                             <div>
 
                                 {!this.props.ctx.gameover && 
-                                    <div style={{color:this.props.ctx.currentPlayer==='0'?'#ff0000':'#0000ff'}}>
+                                    <div style={{color:getColor(parseInt(this.props.ctx.currentPlayer)).main}}>
                                         {this.props.ctx.phase === "playRound" && 
-                                            <h2>Round {this.props.G.roundsPlayed+1} Action {(this.props.G.actionsTakenInRound + 2 - this.props.G.actionsTakenInRound%2)/2 }</h2>
+                                            <h2>Round {this.props.G.roundsPlayed+1} Action {(this.props.G.actionsTakenInRound + this.props.ctx.numPlayers - this.props.G.actionsTakenInRound%this.props.ctx.numPlayers)/2 }</h2>
                                         }
 
                                         {this.props.ctx.phase === "scoreRound" && 
@@ -231,12 +257,12 @@ class DeckchairsBoard extends React.Component {
                                 <table id="scores">
                                     <thead>
                                         <tr>
-                                        {this.props.G.scores.map((score, i) => <td style={{textAlign:'center', color:i===0?'#ff0000':'#0000ff'}} key={i}>Player {i}</td>)} 
+                                        {this.props.G.scores.map((score, i) => <td style={{textAlign:'center', color:getColor(i).main}} key={i}>Player {i}</td>)} 
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            {this.props.G.scores.map((score, i) => <td style={{textAlign:'center', color:i===0?'#ff0000':'#0000ff'}} key={i}>{score}</td>)} 
+                                            {this.props.G.scores.map((score, i) => <td style={{textAlign:'center', color:getColor(i).main}} key={i}>{score}</td>)} 
                                         </tr>
                                     </tbody>
                                 </table>
@@ -269,7 +295,7 @@ class DeckchairsBoard extends React.Component {
                                             <td style={cellStyleEmpty}
                                                 onClick={() => this.onDirectionClick(6)}><DirectionIcon direction="6"/></td>
                                             <td style={{...cellStyleEmpty, textAlign:'center'}}
-                                                onClick={() => this.onPlaceAttendantClick()}><MeepleIcon color={this.props.ctx.currentPlayer==='0'?'#ff0000':'#0000ff'}/></td>
+                                                onClick={() => this.onPlaceAttendantClick()}><MeepleIcon color={getColor(parseInt(this.props.ctx.currentPlayer)).main}/></td>
                                             <td style={cellStyleEmpty}
                                                 onClick={() => this.onDirectionClick(2)}><DirectionIcon direction="2"/></td>
                                         </tr>

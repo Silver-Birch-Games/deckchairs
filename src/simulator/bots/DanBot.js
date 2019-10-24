@@ -10,7 +10,15 @@ const utils = boardUtils(7,7);
 const evaluator = ({G, ctx}) => {
     let movedCells = applyShipMovement(utils, G, G.directionCardDeck[G.roundsPlayed]);
 
-    return calculateScores(G, movedCells, 24);
+    let scores = calculateScores(G, ctx, movedCells, 24);
+
+    let totalScores = scores.reduce((total, score) => (total + score));
+
+    if(totalScores > 0){
+        scores = scores.map((score) => (score/totalScores));
+    }
+
+    return scores;
 }
 
 export default class DanBot extends Bot {
@@ -46,6 +54,10 @@ export default class DanBot extends Bot {
         //console.log(moves);
         if(moves.length === 1){
             return {action: moves[0]};
+        }
+
+        if(moves.length === 0){
+            return {action: null};
         }
 
         //console.log(this.EndTime);
@@ -101,8 +113,10 @@ export default class DanBot extends Bot {
           }
 
           //score this position for each player
-          let nodeScores = this.evaluator({G: state.G, ctx: state.ctx}).map((score) => (score));
+          let nodeScores = this.evaluator({G: state.G, ctx: state.ctx});
 
+          
+    
           return {
               state: state,
               children: children,
@@ -157,15 +171,7 @@ export default class DanBot extends Bot {
 
                 //let childScore = child.node.scores[currentPlayerId] - child.node.scores[currentPlayerId+1%2];
 
-                let totalScores = child.node.scores[0] + child.node.scores[1];
-                let childScore 
-                
-                if(totalScores > 0){
-                    childScore = child.node.scores[currentPlayerId] / (child.node.scores[0] + child.node.scores[1]);
-                } 
-                else{
-                    childScore = 0;
-                }
+                let childScore = child.node.scores[currentPlayerId];
 
                 scores.push(childScore);
                 if(childScore > maximumScore){

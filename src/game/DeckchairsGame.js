@@ -43,7 +43,9 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
 
         let shuffledDeck = [null, ...ctx.random.Shuffle(directionCardDeck)];
 
-        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:[0,0], bonusPointsCellId:bonusPointsCellId, attendantsUsed: [0,0] }
+        let scores = new Array(ctx.numPlayers).fill(0);
+
+        return { width: width, height:height, cells: cells, iceBlockCellId: iceBlockStartPosition, actionsTakenInRound:0, directionCardDeck:shuffledDeck, roundsPlayed:0, scores:scores, bonusPointsCellId:bonusPointsCellId, attendantsUsed: scores }
     }
 
     return {
@@ -208,14 +210,13 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
                         else{
                             console.log("Pushing ice block must result in it moving");
                             console.log("Position: " + G.iceBlockCellId + "Direction: " + direction);
-                            console.log(G.attendantsUsed[0] + " " + G.attendantsUsed[1]);
                             return INVALID_MOVE;
                         }
                          
                         
                     },
                     testCalculateScores: (G, ctx) => {
-                        let roundScores = calculateScores(G, G.cells, bonusPointsCellId);
+                        let roundScores = calculateScores(G, ctx, G.cells, bonusPointsCellId);
 
                         for(let i in roundScores){
                             G.scores[i] += roundScores[i];
@@ -243,7 +244,7 @@ function DeckchairsGame(width,height,targets,deckchairs,iceBlockStartPosition,te
                         }
                         
                         //calculate scores
-                        let roundScores = calculateScores(G, cells, bonusPointsCellId);
+                        let roundScores = calculateScores(G, ctx, cells, bonusPointsCellId);
 
                         for(let i in roundScores){
                             G.scores[i] += roundScores[i];

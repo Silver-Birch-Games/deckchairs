@@ -103,6 +103,7 @@ const iceBlockStartPosition = 24;
 
 const App = Client({  
   game: DeckchairsGame(7,7, targets, deckchairs, iceBlockStartPosition, testMode, (+new Date()).toString(36).slice(-10)),
+  numPlayers: 4,
   board: DeckchairsBoard,
   ai: AI({
     bot: DanBot,

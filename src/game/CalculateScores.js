@@ -1,10 +1,8 @@
 //return scores array with scores for this round
-function calculateScores(state, cells, bonusPointsCellId){
-    let roundScores = [0,0];
+function calculateScores(G, ctx, cells, bonusPointsCellId){
+    let roundScores = new Array(ctx.numPlayers).fill(0);
     
-
-
-    for(let i=0; i<state.width*state.height; i++){
+    for(let i=0; i<G.width*G.height; i++){
         //check for deckchair
         if(cells[i].contents != null && cells[i].contents !== "Ice"){
             //check central square 

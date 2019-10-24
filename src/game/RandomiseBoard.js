@@ -4,9 +4,12 @@ export default function randomiseBoard(G, ctx){
 
     const utils = new boardUtils(7,7);
 
+    const numPlayers = ctx.numPlayers;
+
     let targets = [];
     let deckchairs = [];
 
+    //targets
     for(let t=0; t<12; t++){
       let i = null;
       
@@ -17,9 +20,10 @@ export default function randomiseBoard(G, ctx){
 
         i = utils.coordsToId(x,y);
       }
-      targets.push( {id: i, playerId: t%2});
+      targets.push( {id: i, playerId: t%numPlayers});
     }
 
+    //deckchairs
     for(let c=0; c<12; c++){
       let i = null;
       
@@ -32,7 +36,7 @@ export default function randomiseBoard(G, ctx){
 
         i = utils.coordsToId(x,y);
       }
-      deckchairs.push( {id: i, playerId: c%2});
+      deckchairs.push( {id: i, playerId: c%numPlayers});
     }
 
     let cells = Array(G.width * G.height);
