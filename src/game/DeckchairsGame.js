@@ -7,7 +7,16 @@ import calculateScores from './CalculateScores';
 import randomiseBoard from './RandomiseBoard';
 
 function DeckchairsGame(numPlayers, width,height,targets,deckchairs,iceBlockStartPosition,testMode,seed) {
-    const actionsPerRound = 8;
+    let actionsPerRound = 8;
+
+    if(numPlayers ===3){
+        actionsPerRound = 9;
+    }
+    else if(numPlayers ===4){
+        actionsPerRound = 12;
+    }
+
+
     const roundsPerGame = 8;
     const bonusPointsCellId = 24;
 

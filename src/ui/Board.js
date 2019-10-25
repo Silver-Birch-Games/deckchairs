@@ -221,7 +221,7 @@ class DeckchairsBoard extends React.Component {
                                 {!this.props.ctx.gameover && 
                                     <div style={{color:getColor(parseInt(this.props.ctx.currentPlayer)).main}}>
                                         {this.props.ctx.phase === "playRound" && 
-                                            <h2>Round {this.props.G.roundsPlayed+1} Action {(this.props.G.actionsTakenInRound + this.props.ctx.numPlayers - this.props.G.actionsTakenInRound%this.props.ctx.numPlayers)/2 }</h2>
+                                            <h2>Round {this.props.G.roundsPlayed+1} Action {(this.props.G.actionsTakenInRound + this.props.ctx.numPlayers - this.props.G.actionsTakenInRound%this.props.ctx.numPlayers)/this.props.ctx.numPlayers }</h2>
                                         }
 
                                         {this.props.ctx.phase === "scoreRound" && 

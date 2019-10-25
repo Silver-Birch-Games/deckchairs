@@ -43,6 +43,10 @@ class SimulatorUi extends React.Component {
             let draws = 0;
             let totalHighScorers = 0;
 
+            let maxDifference = 0;
+            let minDifference = Infinity;
+            let totalDifference = 0;
+
             for(let iteration=1; iteration<=iterations; iteration++){
 
                 if(parseInt(this.state.iterationsString)){
@@ -50,14 +54,35 @@ class SimulatorUi extends React.Component {
 
                     scores.push(newScores);
                     
+                    let maxScore = 0;
+                    let minScore = Infinity;
                     for(let p=0; p<numPlayers; p++){
                         totalScores[p] += newScores[p];
                         maxScores[p] = Math.max(maxScores[p], newScores[p] );
                         minScores[p] = Math.min(minScores[p], newScores[p] );
-                        scoreDifferences[p] = Math.abs(maxScores[p] - minScores[p]);
+                        
+                        if(newScores[p] > maxScore){
+                            maxScore = newScores[p];
+                        }
+
+                        if(newScores[p] < minScore){
+                            minScore = newScores[p];
+                        }
                     }
 
-                    let maxScore = newScores.reduce((max, score) => (Math.max(max,score)));
+                    let scoreDifference = maxScore - minScore;
+
+                    scoreDifferences.push(scoreDifference);
+
+                    if(scoreDifference > maxDifference){
+                        maxDifference = scoreDifference;
+                    }
+
+                    if(scoreDifference < minDifference){
+                        minDifference = scoreDifference;
+                    }
+
+                    totalDifference += scoreDifference;
 
                     let numWinners = 0;
                     let winner = null;
@@ -86,18 +111,12 @@ class SimulatorUi extends React.Component {
 
                     
                         
-                    let maxDifference = 0;
-                    let minDifference = Infinity;
-                    let totalDifference = 0;
+                    
 
                     let allWins = new Array(numPlayers).fill(0);
                     let allWinRates = new Array(numPlayers).fill(0);
 
-                    for(let i=0;i<scoreDifferences.length;i++){
-                        maxDifference = Math.max(maxDifference, scoreDifferences[i]);
-                        minDifference = Math.min(minDifference, scoreDifferences[i]);
-                        totalDifference += scoreDifferences[i];
-
+                    for(let i=0;i<wins.length;i++){
                         allWins[i] = wins[i] + sharedWins[i];
                         allWinRates[i] = (allWins[i] / iteration).toFixed(2);
                     }
